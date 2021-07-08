@@ -13,7 +13,8 @@ const fieldNames = {
     paymentplandate: "dav_paymentplandate",
     autoid: "dav_autoid",
     contact: "dav_contact",
-    agreementnumber: "dav_agreementnumber"
+    agreementnumber: "dav_agreementnumber",
+    date: "dav_date"
 }
 
 
@@ -21,17 +22,15 @@ Navicon.dav_agreement = (function()
 {
 
     // Открываем вкладку кредит, если выбраны автомобиль и контакт
-    let autoidOrContactOnChange = function(context)
+    let creditTabVisibleOnFieldsChange = function(context)
     {
         let formContext = context.getFormContext();
 
-        let autoidAttr = formContext.getAttribute(fieldNames.autoid);
-        let contactAttr = formContext.getAttribute(fieldNames.contact);
-
         let creditTabControl = formContext.ui.tabs.get("credittab");
 
-        if (autoidAttr.getValue() !== null && autoidAttr.isValid() 
-            && contactAttr.getValue() !== null && contactAttr.isValid())
+        if (   getAttributeValue(context, fieldNames.autoid) !== null && isAttributeValid(context, fieldNames.autoid) 
+            && getAttributeValue(context, fieldNames.contact) !== null && isAttributeValid(context, fieldNames.contact)
+            && getAttributeValue(context, fieldNames.date) !== null && isAttributeValid(context, fieldNames.date))
         {
             creditTabControl.setVisible(true);
             changeFieldsDisabling(context, false, fieldNames.creditid);
@@ -48,17 +47,56 @@ Navicon.dav_agreement = (function()
     // выбрана ли кредитная программа
     let creditidOnChange = function(context)
     {
-        if (getAttributeValue(context, fieldNames.creditid) !== null 
-            && checkAttributeValid(context, fieldNames.creditid))
+        let formContext = context.getFormContext();
+
+        let creditid = getAttributeValue(context, fieldNames.creditid);
+
+        if (creditid !== null)
         {
-            changeFieldsDisabling(context, false,
-                fieldNames.creditperiod,
-                fieldNames.creditamount,
-                fieldNames.fullcreditamount,
-                fieldNames.fullcreditamount,
-                fieldNames.initialfee,
-                fieldNames.factsumma,
-                fieldNames.paymentplandate);
+            let creditidControl = formContext.getControl(fieldNames.creditid);
+            let date = getAttributeValue(context, fieldNames.date);
+
+            Xrm.WebApi.retrieveRecord("dav_credit", creditid[0].id).then(
+                function(result)
+                {
+                    if (date - new Date(result.dav_dateend) > 0)
+                    {
+                        creditidControl.addNotification({
+                            messages: ['Срок действия кредитной программы истек'],
+                            notificationLevel: 'ERROR',
+                            uniqueId: 'dav_date_creditdateendconflict'
+                        });
+
+                        changeFieldsDisabling(context, true,
+                            fieldNames.creditperiod,
+                            fieldNames.creditamount,
+                            fieldNames.fullcreditamount,
+                            fieldNames.fullcreditamount,
+                            fieldNames.initialfee,
+                            fieldNames.factsumma,
+                            fieldNames.paymentplandate);
+                    }
+                    else
+                    {
+                        creditidControl.clearNotification("dav_date_creditdateendconflict");
+
+                        changeFieldsDisabling(context, false,
+                            fieldNames.creditperiod,
+                            fieldNames.creditamount,
+                            fieldNames.fullcreditamount,
+                            fieldNames.fullcreditamount,
+                            fieldNames.initialfee,
+                            fieldNames.factsumma,
+                            fieldNames.paymentplandate);
+
+                        // Подставляем срок кредита из кредитной программы во поле
+                        // из вкладки "Кредит"
+                        setAttributeValue(context, fieldNames.creditperiod, result.dav_creditperiod);    
+                    }
+                }
+            );
+
+            
         }
         else
         {
@@ -169,7 +207,7 @@ Navicon.dav_agreement = (function()
     }
 
 
-    var checkAttributeValid = function (context, field)
+    var isAttributeValid = function (context, field)
     {
         return context.getFormContext().getAttribute(field).isValid();
     }
@@ -199,10 +237,12 @@ Navicon.dav_agreement = (function()
 
             let autoidAttr = formContext.getAttribute(fieldNames.autoid);
             let contactAttr = formContext.getAttribute(fieldNames.contact);
+            let dateAttr = formContext.getAttribute(fieldNames.date);
 
-            // Проверяем изменение автомобиля/контакта для открытия вкладки "Кредит"
-            autoidAttr.addOnChange(autoidOrContactOnChange);
-            contactAttr.addOnChange(autoidOrContactOnChange);
+            // Проверяем изменение автомобиля/контакта/даты для открытия вкладки "Кредит"
+            autoidAttr.addOnChange(creditTabVisibleOnFieldsChange);
+            contactAttr.addOnChange(creditTabVisibleOnFieldsChange);
+            dateAttr.addOnChange(creditTabVisibleOnFieldsChange);
 
             // Проверяем автомобиль для выборки кредитных программ
             autoidAttr.addOnChange(autoidOnChange);
