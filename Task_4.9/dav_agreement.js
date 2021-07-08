@@ -1,127 +1,177 @@
 var Navicon = Navicon || {}
 
-var lookupOptions = 
-{
-    defaultEntityType: "dav_credit",
-	entityTypes: ["dav_credit"],
-    allowMultiSelect: false,
-	searchText:"Allison",
-	filters: [{filterXml: "<filter type='or'><condition attribute='name' operator='like' value='A%' /></filter>",entityLogicalName: "dav_credit"}]
-};
+
+const fieldNames = {
+    amount: "dav_amount",
+    fact: "dav_fact",
+    creditid: "dav_creditid",
+    creditperiod: "dav_creditperiod",
+    creditamount: "dav_creditamount",
+    fullcreditamount: "dav_fullcreditamount",
+    initialfee: "dav_initialfee",
+    factsumma: "dav_factsumma",
+    paymentplandate: "dav_paymentplandate",
+    autoid: "dav_autoid",
+    contact: "dav_contact",
+    agreementnumber: "dav_agreementnumber"
+}
+
 
 Navicon.dav_agreement = (function()
 {
 
-    var autoidOrContactOnChange = function(context)
+    // Открываем вкладку кредит, если выбраны автомобиль и контакт
+    let autoidOrContactOnChange = function(context)
     {
         let formContext = context.getFormContext();
 
-        let autoidAttr = formContext.getAttribute("dav_autoid");
-        let contactAttr = formContext.getAttribute("dav_contact");
+        let autoidAttr = formContext.getAttribute(fieldNames.autoid);
+        let contactAttr = formContext.getAttribute(fieldNames.contact);
 
         let creditTabControl = formContext.ui.tabs.get("credittab");
-        let creditidControl = formContext.getControl("dav_creditid");
 
         if (autoidAttr.getValue() !== null && autoidAttr.isValid() 
             && contactAttr.getValue() !== null && contactAttr.isValid())
         {
             creditTabControl.setVisible(true);
-            creditidControl.setDisabled(false);
+            changeFieldsDisabling(context, false, fieldNames.creditid);
         }
         else
         {
             creditTabControl.setVisible(false);
-            creditidControl.setDisabled(true);
+            changeFieldsDisabling(context, true, fieldNames.creditid);
         }
     }
 
 
-    var creditidOnChange = function(context)
+    // Открываем/закрываем доступ к полям в зависимости от того, 
+    // выбрана ли кредитная программа
+    let creditidOnChange = function(context)
     {
-        let formContext = context.getFormContext();
-
-        let creditidAttr = formContext.getAttribute("dav_creditid");
-
-        if (creditidAttr.getValue() !== null && creditidAttr.isValid())
+        if (getAttributeValue(context, fieldNames.creditid) !== null 
+            && checkAttributeValid(context, fieldNames.creditid))
         {
-            formContext.getControl("dav_creditperiod").setDisabled(false);
-            formContext.getControl("dav_creditamount").setDisabled(false);
-            formContext.getControl("dav_fullcreditamount").setDisabled(false);
-            formContext.getControl("dav_initialfee").setDisabled(false);
-            formContext.getControl("dav_creditperiod").setDisabled(false);
-            formContext.getControl("dav_factsumma").setDisabled(false);
-            formContext.getControl("dav_paymentplandate").setDisabled(false);
+            changeFieldsDisabling(context, false,
+                fieldNames.creditperiod,
+                fieldNames.creditamount,
+                fieldNames.fullcreditamount,
+                fieldNames.fullcreditamount,
+                fieldNames.initialfee,
+                fieldNames.factsumma,
+                fieldNames.paymentplandate);
+        }
+        else
+        {
+            changeFieldsDisabling(context, true,
+                fieldNames.creditperiod,
+                fieldNames.creditamount,
+                fieldNames.fullcreditamount,
+                fieldNames.fullcreditamount,
+                fieldNames.initialfee,
+                fieldNames.factsumma,
+                fieldNames.paymentplandate);
         }
     }
 
 
+    // Форматируем номер договора (только цифры и знаки тире)
     let agreementnumberOnChange = function(context)
     {
-        let formContext = context.getFormContext();
-        let agreementnumberAttr = formContext.getAttribute("dav_agreementnumber");
-
-        let val = agreementnumberAttr.getValue();
-        if (val !== null)
-            agreementnumberAttr.setValue(val.replace(/[^-\d]/g, ''));
+        let currentValue = getAttributeValue(context, fieldNames.agreementnumber);
+        
+        if (currentValue !== null)
+            setAttributeValue(
+                context, 
+                fieldNames.agreementnumber,
+                currentValue.replace(/[^-\d]/g, '')
+            );
     }
 
 
+    // Изменение списка кредитных программ в зависимости от автомобиля
     let autoidOnChange = function(context)
     {
         let formContext = context.getFormContext();
-        let autoArray = formContext.getAttribute("dav_autoid").getValue();
 
-        
-
+        let autoArray = getAttributeValue(context, fieldNames.autoid);
 
         if (autoArray !== null)
         {
-            let autoRef = autoArray[0];
+            // Получаем id выбранного в форме автомобиля
+            let autoid = autoArray[0].id;
 
-            var fetchData = {
-                dav_autoid: autoRef.id
-            };
+            let viewId = "{7A047D7A-D76F-4080-B035-4EDB276C59F5}";
+ 
+            let entity = "dav_credit";
+                               
+            let viewDisplayName = "Кредитные программы";
 
-            var fetchXml = [
-        "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>",
-        "<entity name='dav_credit'>",
-        "<attribute name='dav_creditid' />",
-        "<attribute name='dav_name' />",
-        "<attribute name='createdon' />",
-        "<order attribute='dav_name' descending='false' />",
-        "<link-entity name='dav_dav_credit_dav_auto' from='dav_creditid' to='dav_creditid' visible='false' intersect='true'>",
-        "<link-entity name='dav_auto' from='dav_autoid' to='dav_autoid' alias='ab'>",
-        "<filter type='and'>",
-        "<condition attribute='dav_autoid' operator='eq' value='", fetchData.dav_autoid, "'/>",
-        "</filter>",
-        "</link-entity>",
-        "</link-entity>",
-        "</entity>",
-        "</fetch>",
+            // Запрос на получение кредитных программ в зависимости от выбранного автомобиля
+            let fetchXml = [
+                "<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true'>",
+                    "<entity name='dav_credit'>",
+                        "<attribute name='dav_creditid' />",
+                        "<attribute name='dav_name' />",
+                        "<attribute name='createdon' />",
+                    "<order attribute='dav_name' descending='false' />",
+                    "<link-entity name='dav_dav_credit_dav_auto' from='dav_creditid' to='dav_creditid' visible='false' intersect='true'>",
+                        "<link-entity name='dav_auto' from='dav_autoid' to='dav_autoid' alias='ab'>",
+                            "<filter type='and'>",
+                                "<condition attribute='dav_autoid' operator='eq' value='", autoid, "'/>",
+                            "</filter>",
+                        "</link-entity>",
+                    "</link-entity>",
+                    "</entity>",
+                "</fetch>",
             ].join("");
 
-            fetchXml = "?fetchXml=" + encodeURIComponent(fetchXml);
-
-            let creditids = [];
-            Xrm.WebApi.retrieveMultipleRecords("dav_credit", fetchXml).then(
-                function(entityResult)
-                {
-                    for (let i = 0; i < entityResult.entities.length; i++) {
-                        creditids.push(entityResult.entities[i].dav_name);
-                    }
-
-                        var filterXml = `<filter type='and'>` +
-                        `<condition attribute='dav_creditid' operator='in'>`;
-                        creditids.forEach(id => {
-                                filterXml += `<value>${id}</value>`
-                        });
-                        filterXml += `</condition></filter>`;
-
-                        formContext.getControl("dav_creditid").addCustomFilter(filterXml, "dav_credit");
-                }
-            );
-               
+            // Сабгрид для отображения нового лукапа
+            let layout = "<grid name='resultset' object='8' jump='dav_name' select='1' icon='1' preview='1'>" +
+            "<row name='result' id='dav_creditid'>" +
+            "<cell name='dav_name' width='300'/>" +
+            "</row></grid>";
+       
+            // Добавляем кастомное представление для лукапа с отфильтрованными данными
+            formContext.getControl(fieldNames.creditid)
+                       .addCustomView(viewId, entity, viewDisplayName, fetchXml, layout, true);
         }
+    }
+
+
+    var changeFieldsDisabling = function (context, makeDisabled, ...fields)
+    {
+        let formContext = context.getFormContext();
+
+        if (makeDisabled === true)
+        {
+            for (let i = 0; i < fields.length; i++) {
+                formContext.getControl(fields[i]).setDisabled(true);
+            }
+        }
+        else
+        {
+            for (let i = 0; i < fields.length; i++) {
+                formContext.getControl(fields[i]).setDisabled(false);
+            }
+        }
+    }
+
+
+    var getAttributeValue = function (context, field)
+    {
+        return context.getFormContext().getAttribute(field).getValue();
+    }
+
+
+    var setAttributeValue = function (context, field, value)
+    {
+        context.getFormContext().getAttribute(field).setValue(value);
+    }
+
+
+    var checkAttributeValid = function (context, field)
+    {
+        return context.getFormContext().getAttribute(field).isValid();
     }
 
 
@@ -131,35 +181,38 @@ Navicon.dav_agreement = (function()
         {
             let formContext = context.getFormContext();
 
-            let amountControl = formContext.getControl("dav_amount");
-            let factControl = formContext.getControl("dav_fact");
-            let creditidControl = formContext.getControl("dav_creditid");
+            // Блокируем все поля кредита, а также некоторые поля с основной вкладки
+            changeFieldsDisabling(context,  true,
+                                    fieldNames.amount,
+                                    fieldNames.fact,
+                                    fieldNames.creditperiod,
+                                    fieldNames.creditamount,
+                                    fieldNames.fullcreditamount,
+                                    fieldNames.initialfee,
+                                    fieldNames.factsumma,
+                                    fieldNames.paymentplandate,
+                                    fieldNames.creditid);
+
+            // Скрываем вкладку "Кредит"
             let creditTabControl = formContext.ui.tabs.get("credittab");
-
-            formContext.getControl("dav_creditperiod").setDisabled(true);
-            formContext.getControl("dav_creditamount").setDisabled(true);
-            formContext.getControl("dav_fullcreditamount").setDisabled(true);
-            formContext.getControl("dav_initialfee").setDisabled(true);
-            formContext.getControl("dav_creditperiod").setDisabled(true);
-            formContext.getControl("dav_factsumma").setDisabled(true);
-            formContext.getControl("dav_paymentplandate").setDisabled(true);
-
-            amountControl.setDisabled(true);
-            factControl.setDisabled(true);
-            creditidControl.setDisabled(true);
             creditTabControl.setVisible(false);
 
-            let autoidAttr = formContext.getAttribute("dav_autoid");
-            let contactAttr = formContext.getAttribute("dav_contact");
+            let autoidAttr = formContext.getAttribute(fieldNames.autoid);
+            let contactAttr = formContext.getAttribute(fieldNames.contact);
+
+            // Проверяем изменение автомобиля/контакта для открытия вкладки "Кредит"
             autoidAttr.addOnChange(autoidOrContactOnChange);
             contactAttr.addOnChange(autoidOrContactOnChange);
 
+            // Проверяем автомобиль для выборки кредитных программ
             autoidAttr.addOnChange(autoidOnChange);
-
-            let creditidAttr = formContext.getAttribute("dav_creditid");
+            
+            // Открываем доступ к полям кредита при наличии кредитной программы
+            let creditidAttr = formContext.getAttribute(fieldNames.creditid);
             creditidAttr.addOnChange(creditidOnChange);
 
-            let agreementnumberAttr = formContext.getAttribute("dav_agreementnumber");
+            // Форматируем номер договора (только цифры и знаки тире)
+            let agreementnumberAttr = formContext.getAttribute(fieldNames.agreementnumber);
             agreementnumberAttr.addOnChange(agreementnumberOnChange);
         }
     }
