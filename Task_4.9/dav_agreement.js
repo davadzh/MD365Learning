@@ -115,46 +115,31 @@ Navicon.dav_agreement = (function()
     // Авторасчет стоимости автомобиля в договоре
     let updateAmountWithAutoOnChange = function(context)
     {
+        let formContext = context.getFormContext();
+
         var modelid;
 
         let autoid = getAttributeValue(context, fieldNames.autoid);
 
-        if (autoid !== null)
-        {
-            Xrm.WebApi.retrieveRecord("dav_auto", autoid[0].id)
-            .then(
-                function(result)
-                {
-                    if (result.dav_used === true)
-                    {
-                        setAttributeValue(context, fieldNames.amount, result.dav_amount);
-                    }
-                    else
-                    {
-                        modelid = result._dav_modelid_value;
-                        Xrm.WebApi.retrieveRecord("dav_model", modelid)
-                        .then(
-                            function(result)
-                            {
-                                setAttributeValue(context, fieldNames.amount, result.dav_recommendedamount);
-                            },
-                            function(error)
-                            {
-                                console.log(error.message);
-                            }
-                        )
-                    }
-                },
-                function(error)
-                {
-                    console.log(error.message);
-                }
-            )
-        }
-        else
-        {
-            setAttributeValue(context, fieldNames.amount, null);
-        }
+        debugger
+
+        Xrm.WebApi.retrieveRecord("dav_auto", autoid[0].id)
+        .then(
+            function(result)
+            {
+                debugger
+                console.log(result.dav_used);
+                console.log(result.dav_anount);
+                modelid = result.dav_modelid
+            } 
+        )
+        .then(
+            function(result)
+            {
+                debugger
+                console.log(result.dav_recommendedamount);
+            } 
+        );
     }
 
 
@@ -241,18 +226,6 @@ Navicon.dav_agreement = (function()
     }
 
 
-    var disableFieldsIfNull = function (context, ...fields)
-    {
-        let formContext = context.getFormContext();
-        
-        for (let i = 0; i < fields.length; i++) 
-        {
-            if (formContext.getAttribute(fields[i]).getValue() === null)
-                formContext.getControl(fields[i]).setDisabled(true);
-        }
-    }
-
-
     var getAttributeValue = function (context, field)
     {
         return context.getFormContext().getAttribute(field).getValue();
@@ -278,7 +251,7 @@ Navicon.dav_agreement = (function()
             let formContext = context.getFormContext();
 
             // Блокируем все поля кредита, а также некоторые поля с основной вкладки
-            disableFieldsIfNull(context,
+            changeFieldsDisabling(context,  true,
                                     fieldNames.amount,
                                     fieldNames.fact,
                                     fieldNames.creditperiod,
@@ -289,18 +262,13 @@ Navicon.dav_agreement = (function()
                                     fieldNames.paymentplandate,
                                     fieldNames.creditid);
 
+            // Скрываем вкладку "Кредит"
+            let creditTabControl = formContext.ui.tabs.get("credittab");
+            creditTabControl.setVisible(false);
+
             let autoidAttr = formContext.getAttribute(fieldNames.autoid);
             let contactAttr = formContext.getAttribute(fieldNames.contact);
             let dateAttr = formContext.getAttribute(fieldNames.date);
-
-            // Скрываем вкладку "Кредит"
-            let creditTabControl = formContext.ui.tabs.get("credittab");
-            if (autoidAttr.getValue() === null
-                || contactAttr.getValue() === null
-                || dateAttr.getValue() === null)
-            {
-                creditTabControl.setVisible(false);
-            }
 
             // Проверяем изменение автомобиля/контакта/даты для открытия вкладки "Кредит"
             autoidAttr.addOnChange(creditTabVisibleOnFieldsChange);
@@ -310,9 +278,6 @@ Navicon.dav_agreement = (function()
             // Проверяем автомобиль для выборки кредитных программ
             autoidAttr.addOnChange(autoidOnChange);
             
-            // Обновляем стоимость в договоре в зависимости от автомобиля и его пробега
-            autoidAttr.addOnChange(updateAmountWithAutoOnChange)
-
             // Открываем доступ к полям кредита при наличии кредитной программы
             let creditidAttr = formContext.getAttribute(fieldNames.creditid);
             creditidAttr.addOnChange(creditidOnChange);
