@@ -1,0 +1,5 @@
+C:\Users\dadzhamyan\source\repos\Auto\Auto.ConsoleApp\bin\Debug\Auto.ConsoleApp.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.ConsoleApp\bin\Debug\Auto.ConsoleApp.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.ConsoleApp\obj\Debug\Auto.ConsoleApp.csproj.CoreCompileInputs.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.ConsoleApp\obj\Debug\Auto.ConsoleApp.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.ConsoleApp\obj\Debug\Auto.ConsoleApp.pdb

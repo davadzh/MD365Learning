@@ -1,0 +1,10 @@
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Auto.Common.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Auto.Common.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.csproj.CoreCompileInputs.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Crm.Sdk.Proxy.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Xrm.Sdk.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Xrm.Sdk.xml
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.csproj.CopyComplete

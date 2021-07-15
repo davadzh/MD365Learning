@@ -1,0 +1,9 @@
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\bin\Debug\Auto.Plugins.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\bin\Debug\Auto.Plugins.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\obj\Debug\Auto.Plugins.csproj.CoreCompileInputs.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\obj\Debug\Auto.Plugins.csproj.CopyComplete
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\obj\Debug\Auto.Plugins.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\obj\Debug\Auto.Plugins.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\obj\Debug\Auto.Plugins.csproj.AssemblyReference.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\bin\Debug\Auto.Common.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Plugins\bin\Debug\Auto.Common.pdb
