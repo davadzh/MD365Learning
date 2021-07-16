@@ -8,15 +8,20 @@ namespace Auto.Plugins.Core
         public ITracingService tracingService;
         public IOrganizationService service;
         public Entity target;
+        public EntityReference deletionTarget;
 
-        public PluginConfiguration(IServiceProvider serviceProvider)
+        public PluginConfiguration(IServiceProvider serviceProvider, bool isDeletionTarget = false)
         {
             try
             {
                 tracingService = (ITracingService)serviceProvider.GetService(typeof(ITracingService));
 
                 var pluginContext = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-                target = (Entity)pluginContext.InputParameters["Target"];
+
+                if (isDeletionTarget)
+                    deletionTarget = (EntityReference)pluginContext.InputParameters["Target"];
+                else
+                    target = (Entity)pluginContext.InputParameters["Target"];
 
                 var serviceFactory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                 service = serviceFactory.CreateOrganizationService(Guid.Empty); //Если от системного, то null

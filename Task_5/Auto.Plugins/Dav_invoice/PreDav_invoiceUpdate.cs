@@ -1,5 +1,5 @@
-﻿using Auto.Plugins.Dav_auto.Handlers;
-using Auto.Plugins.Core;
+﻿using Auto.Plugins.Core;
+using Auto.Plugins.Dav_invoice.Handlers;
 using Entities;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -8,19 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auto.Plugins.Dav_auto
+namespace Auto.Plugins.Dav_invoice
 {
-    public sealed class PreDav_autoUpdate : IPlugin
+    public sealed class PreDav_invoiceUpdate : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {
             PluginConfiguration plugin = new PluginConfiguration(serviceProvider);
-            var target = plugin.target.ToEntity<dav_auto>();
+            var target = plugin.target.ToEntity<dav_invoice>();
 
             try
             {
-                Dav_autoService autoService = new Dav_autoService(plugin.service);
-                autoService.CopyNameToVin(target);
+                Dav_invoiceService davInvoiceService = new Dav_invoiceService(plugin.service, plugin.tracingService);
+                davInvoiceService.SetAgreementAmountDependingOnStatusOnUpdate(target);
             }
             catch (Exception ex)
             {

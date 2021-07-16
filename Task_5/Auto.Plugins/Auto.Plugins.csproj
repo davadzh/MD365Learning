@@ -66,11 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dav_agreement\Handlers\Dav_agreementService.cs" />
+    <Compile Include="Dav_agreement\PreDav_agreementCreate.cs" />
     <Compile Include="Dav_auto\Handlers\Dav_autoService.cs" />
     <Compile Include="Dav_auto\PreDav_autoUpdate.cs" />
     <Compile Include="Core\PluginConfiguration.cs" />
+    <Compile Include="Dav_communication\Handlers\Dav_communicationService.cs" />
+    <Compile Include="Dav_communication\PreDav_communicationCreate.cs" />
     <Compile Include="Dav_invoice\Handlers\Dav_invoiceService.cs" />
     <Compile Include="Dav_invoice\PreDav_invoiceCreate.cs" />
+    <Compile Include="Dav_invoice\PreDav_invoiceDelete.cs" />
+    <Compile Include="Dav_invoice\PreDav_invoiceUpdate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

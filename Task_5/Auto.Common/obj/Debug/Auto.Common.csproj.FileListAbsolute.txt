@@ -8,3 +8,4 @@ C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Xrm.Sdk.dl
 C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Crm.Sdk.Proxy.xml
 C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\bin\Debug\Microsoft.Xrm.Sdk.xml
 C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.csproj.CopyComplete
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Common\obj\Debug\Auto.Common.csproj.AssemblyReference.cache

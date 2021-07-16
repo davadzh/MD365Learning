@@ -1,5 +1,5 @@
-﻿using Auto.Plugins.Dav_auto.Handlers;
-using Auto.Plugins.Core;
+﻿using Auto.Plugins.Core;
+using Auto.Plugins.Dav_agreement.Handlers;
 using Entities;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -8,19 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auto.Plugins.Dav_auto
+namespace Auto.Plugins.Dav_agreement
 {
-    public sealed class PreDav_autoUpdate : IPlugin
+    public sealed class PreDav_agreementCreate : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {
             PluginConfiguration plugin = new PluginConfiguration(serviceProvider);
-            var target = plugin.target.ToEntity<dav_auto>();
+            var target = plugin.target.ToEntity<dav_agreement>();
 
             try
             {
-                Dav_autoService autoService = new Dav_autoService(plugin.service);
-                autoService.CopyNameToVin(target);
+                Dav_agreementService davAgreementService = new Dav_agreementService(plugin.service);
+                davAgreementService.TrySetContactFirstAgreement(target);
             }
             catch (Exception ex)
             {
