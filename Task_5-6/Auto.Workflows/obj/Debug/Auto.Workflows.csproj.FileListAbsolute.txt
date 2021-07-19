@@ -1,0 +1,9 @@
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\bin\Debug\Auto.Workflows.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\bin\Debug\Auto.Workflows.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\obj\Debug\Auto.Workflows.csproj.AssemblyReference.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\obj\Debug\Auto.Workflows.csproj.CoreCompileInputs.cache
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\obj\Debug\Auto.Workflows.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\obj\Debug\Auto.Workflows.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\bin\Debug\Auto.Common.dll
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\bin\Debug\Auto.Common.pdb
+C:\Users\dadzhamyan\source\repos\Auto\Auto.Workflows\obj\Debug\Auto.Workflows.csproj.CopyComplete
