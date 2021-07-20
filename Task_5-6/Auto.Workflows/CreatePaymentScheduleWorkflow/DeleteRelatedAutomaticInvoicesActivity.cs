@@ -2,12 +2,9 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Workflow;
-using System;
 using System.Activities;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 {
@@ -20,15 +17,17 @@ namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 
         protected override void Execute(CodeActivityContext context)
         {
-            var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
+            try
+            {
+                var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
 
-            var service = serviceFactory.CreateOrganizationService(null);
+                var service = serviceFactory.CreateOrganizationService(null);
 
-            var agreementRef = AgreementReference.Get(context);
+                var agreementRef = AgreementReference.Get(context);
 
-            var dav_type = "810610001";
+                var dav_type = "810610001";
 
-            var fetchXml = $@"
+                var fetchXml = $@"
                 <fetch>
                   <entity name='dav_invoice'>
                     <attribute name='dav_invoiceid' />
@@ -39,11 +38,16 @@ namespace Auto.Workflows.CreatePaymentScheduleWorkflow
                   </entity>
                 </fetch>";
 
-            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            foreach (var el in result?.Entities?.Select(x => x.ToEntity<dav_invoice>()))
+                foreach (var el in result?.Entities?.Select(x => x.ToEntity<dav_invoice>()))
+                {
+                    service.Delete(dav_invoice.EntityLogicalName, el.Id);
+                }
+            }
+            catch (Exception e)
             {
-                service.Delete(dav_invoice.EntityLogicalName, el.Id);
+                throw new InvalidWorkflowException(e.Message);
             }
         }
     }

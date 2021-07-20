@@ -55,7 +55,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\AgreementCommands.cs" />
     <Compile Include="Commands\ContactCommands.cs" />
     <Compile Include="Commands\InvoiceCommands.cs" />
     <Compile Include="Entities\Entities.cs" />

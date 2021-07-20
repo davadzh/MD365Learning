@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Workflow;
-using System;
 using System.Activities;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 {
@@ -22,16 +19,18 @@ namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 
         protected override void Execute(CodeActivityContext context)
         {
-            var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
+            try
+            {
+                var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
 
-            var service = serviceFactory.CreateOrganizationService(null);
+                var service = serviceFactory.CreateOrganizationService(null);
 
-            var agreementRef = AgreementReference.Get(context);
+                var agreementRef = AgreementReference.Get(context);
 
-            //Тип создания счета "Вручную"
-            var dav_type = "810610000";
+                //Тип создания счета "Вручную"
+                var dav_type = "810610000";
 
-            var fetchXml = $@"
+                var fetchXml = $@"
                 <fetch>
                   <entity name='dav_agreement'>
                     <attribute name='dav_name' />
@@ -46,12 +45,18 @@ namespace Auto.Workflows.CreatePaymentScheduleWorkflow
                   </entity>
                 </fetch>";
 
-            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+                var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            if (result?.Entities?.Count() != 0)
-                HasLinkedManualTypeInvoices.Set(context, true);
-            else
-                HasLinkedManualTypeInvoices.Set(context, false);
+                if (result?.Entities?.Count() != 0)
+                    HasLinkedManualTypeInvoices.Set(context, true);
+                else
+                    HasLinkedManualTypeInvoices.Set(context, false);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidWorkflowException(e.Message);
+            }
+            
         }
     }
 }

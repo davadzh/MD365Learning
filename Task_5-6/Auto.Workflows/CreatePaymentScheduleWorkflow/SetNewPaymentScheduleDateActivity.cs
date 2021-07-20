@@ -1,12 +1,8 @@
 ﻿using Entities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Workflow;
-using System;
 using System.Activities;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 {
@@ -19,17 +15,27 @@ namespace Auto.Workflows.CreatePaymentScheduleWorkflow
 
         protected override void Execute(CodeActivityContext context)
         {
-            var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
+            try
+            {
+                var serviceFactory = context.GetExtension<IOrganizationServiceFactory>();
 
-            var service = serviceFactory.CreateOrganizationService(null);
+                var service = serviceFactory.CreateOrganizationService(null);
 
-            var agreementRef = AgreementReference.Get(context);
+                var agreementRef = AgreementReference.Get(context);
 
-            dav_agreement davAgreementToUpdate = new dav_agreement();
-            davAgreementToUpdate.Id = agreementRef.Id;
-            davAgreementToUpdate.dav_paymentplandate = davAgreementToUpdate.dav_paymentplandate.Value.AddDays(1);
+                dav_agreement davAgreementToUpdate = new dav_agreement()
+                {
+                    Id = agreementRef.Id,
+                    dav_paymentplandate = DateTime.Now.AddDays(1)
+                };
 
-            service.Update(davAgreementToUpdate);
+                service.Update(davAgreementToUpdate);
+            }
+            catch (Exception e)
+            {
+
+                throw new InvalidWorkflowException(e.Message);
+            }
         }
     }
 }
