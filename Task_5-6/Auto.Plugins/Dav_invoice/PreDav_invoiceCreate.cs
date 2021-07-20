@@ -11,17 +11,17 @@ namespace Auto.Plugins.Dav_invoice
         public void Execute(IServiceProvider serviceProvider)
         {
             PluginConfiguration plugin = new PluginConfiguration(serviceProvider);
-            var target = plugin.target.ToEntity<dav_invoice>();
+            var target = plugin.Target.ToEntity<dav_invoice>();
 
             try
             {
-                Dav_invoiceService davInvoiceService = new Dav_invoiceService(plugin.service, plugin.tracingService);
+                Dav_invoiceService davInvoiceService = new Dav_invoiceService(plugin.Service, plugin.TrasingService);
                 davInvoiceService.SetDefaultInvoiceType(target);
                 davInvoiceService.SetAgreementAmountDependingOnStatusOnCreate(target);
             }
             catch (Exception ex)
             {
-                plugin.tracingService.Trace(ex.ToString());
+                plugin.TrasingService.Trace(ex.ToString());
                 throw new InvalidPluginExecutionException(ex.Message);
             }
         }

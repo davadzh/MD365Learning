@@ -3,10 +3,6 @@ using Auto.Plugins.Dav_agreement.Handlers;
 using Entities;
 using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Auto.Plugins.Dav_agreement
 {
@@ -15,16 +11,16 @@ namespace Auto.Plugins.Dav_agreement
         public void Execute(IServiceProvider serviceProvider)
         {
             PluginConfiguration plugin = new PluginConfiguration(serviceProvider);
-            var target = plugin.target.ToEntity<dav_agreement>();
+            var target = plugin.Target.ToEntity<dav_agreement>();
 
             try
             {
-                Dav_agreementService davAgreementService = new Dav_agreementService(plugin.service);
+                Dav_agreementService davAgreementService = new Dav_agreementService(plugin.Service);
                 davAgreementService.TrySetContactFirstAgreement(target);
             }
             catch (Exception ex)
             {
-                plugin.tracingService.Trace(ex.ToString());
+                plugin.TrasingService.Trace(ex.ToString());
                 throw new InvalidPluginExecutionException(ex.Message);
             }
         }
