@@ -1,6 +1,5 @@
 var Navicon = Navicon || {}
 
-
 const fieldNames = {
     amount: "dav_amount",
     fact: "dav_fact",
@@ -241,13 +240,13 @@ Navicon.dav_agreement = (function()
     }
 
 
-    var disableFieldsIfNull = function (context, ...fields)
+    var disableFieldsIfUndefined = function (context, ...fields)
     {
         let formContext = context.getFormContext();
         
         for (let i = 0; i < fields.length; i++) 
         {
-            if (formContext.getAttribute(fields[i]).getValue() === null)
+            if (formContext.getAttribute(fields[i]).getValue() === undefined)
                 formContext.getControl(fields[i]).setDisabled(true);
         }
     }
@@ -278,7 +277,7 @@ Navicon.dav_agreement = (function()
             let formContext = context.getFormContext();
 
             // Блокируем все поля кредита, а также некоторые поля с основной вкладки
-            disableFieldsIfNull(context,
+            disableFieldsIfUndefined(context,
                                     fieldNames.amount,
                                     fieldNames.fact,
                                     fieldNames.creditperiod,

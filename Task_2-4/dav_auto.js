@@ -1,5 +1,12 @@
 var Navicon = Navicon || {}
 
+const fieldNames = {
+    km: "dav_km",
+    ownerscount: "dav_ownerscount",
+    isdamaged: "dav_isdamaged",
+    used: "dav_used"
+}
+
 
 Navicon.dav_auto = (function()
 {
@@ -8,11 +15,11 @@ Navicon.dav_auto = (function()
     {
         let formContext = context.getFormContext();
 
-        let kmControl = formContext.getControl("dav_km");
-        let ownerscountControl = formContext.getControl("dav_ownerscount");
-        let isdamagedControl = formContext.getControl("dav_isdamaged");
+        let kmControl = formContext.getControl(fieldNames.km);
+        let ownerscountControl = formContext.getControl(fieldNames.ownerscount);
+        let isdamagedControl = formContext.getControl(fieldNames.isdamaged);
 
-        let isUsed = formContext.getAttribute("dav_used").getValue();
+        let isUsed = formContext.getAttribute(fieldNames.used).getValue();
 
         if (isUsed)
         {
@@ -22,18 +29,20 @@ Navicon.dav_auto = (function()
         }
         else
         {
-            let kmAttr = formContext.getAttribute("dav_km");
-            let ownerscountAttr = formContext.getAttribute("dav_ownerscount");
-            let isdamagedAttr = formContext.getAttribute("dav_isdamaged");
-
-            kmAttr.setValue(null);
-            ownerscountAttr.setValue(null);
-            isdamagedAttr.setValue(null);
+            setAttributeValue(context, fieldNames.km, null);
+            setAttributeValue(context, fieldNames.ownerscount, null);
+            setAttributeValue(context, fieldNames.isdamaged, null);
 
             kmControl.setVisible(false);
             ownerscountControl.setVisible(false);
             isdamagedControl.setVisible(false);
         }
+    }
+
+
+    var setAttributeValue = function (context, field, value)
+    {
+        context.getFormContext().getAttribute(field).setValue(value);
     }
 
 
@@ -43,11 +52,11 @@ Navicon.dav_auto = (function()
         {
             let formContext = context.getFormContext();
 
-            formContext.getControl("dav_km").setVisible(false);
-            formContext.getControl("dav_ownerscount").setVisible(false);
-            formContext.getControl("dav_isdamaged").setVisible(false);
+            formContext.getControl(fieldNames.km).setVisible(false);
+            formContext.getControl(fieldNames.ownerscount).setVisible(false);
+            formContext.getControl(fieldNames.isdamaged).setVisible(false);
 
-            let usedAttr = formContext.getAttribute("dav_used");
+            let usedAttr = formContext.getAttribute(fieldNames.used);
             usedAttr.addOnChange(usedOnChange)
         }
     }

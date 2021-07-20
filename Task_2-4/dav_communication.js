@@ -1,5 +1,11 @@
 var Navicon = Navicon || {}
 
+const fieldNames = {
+    phone: "dav_phone",
+    email: "dav_email",
+    type: "dav_type"
+}
+
 const contactTypes = {
     phone: 810610003,
     email: 810610004
@@ -11,12 +17,12 @@ Navicon.dav_communication = (function()
     {
         let formContext = context.getFormContext();
 
-        let phoneControl = formContext.getControl("dav_phone");
-        let emailControl = formContext.getControl("dav_email");
+        let phoneControl = formContext.getControl(fieldNames.phone);
+        let emailControl = formContext.getControl(fieldNames.email);
         
-        let phoneAttr = formContext.getAttribute("dav_phone");
-        let emailAttr = formContext.getAttribute("dav_email");
-        let typeAttr = formContext.getAttribute("dav_type");
+        let phoneAttr = formContext.getAttribute(fieldNames.phone);
+        let emailAttr = formContext.getAttribute(fieldNames.email);
+        let typeAttr = formContext.getAttribute(fieldNames.type);
 
         phoneControl.setVisible(false);
         emailControl.setVisible(false);
@@ -48,10 +54,10 @@ Navicon.dav_communication = (function()
         {
             let formContext = context.getFormContext();
 
-            formContext.getControl("dav_phone").setVisible(false);
-            formContext.getControl("dav_email").setVisible(false);
+            formContext.getControl(fieldNames.phone).setVisible(false);
+            formContext.getControl(fieldNames.email).setVisible(false);
 
-            let typeAttr = formContext.getAttribute("dav_type");
+            let typeAttr = formContext.getAttribute(fieldNames.type);
             typeAttr.addOnChange(typeOnChange);
         }
     }
